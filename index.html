@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengatur Keuangan | </title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --bg-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-light: rgba(255, 255, 255, 0.9);
+            --text-light: #2c3e50;
+            --primary-light: #4361ee;
+            --income-light: #4cc9f0;
+            --expense-light: #f72585;
+            
+            /* Dark Mode Colors */
+            --bg-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --card-dark: rgba(30, 39, 46, 0.9);
+            --text-dark: #f8f9fa;
+            --primary-dark: #6c5ce7;
+            --income-dark: #00b894;
+            --expense-dark: #ff7675;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: var(--bg-dark);
+                color: var(--text-dark);
+            }
+            .balance {
+                background: var(--primary-dark);
+            }
+            .form-group, .transaction {
+                background: var(--card-dark);
+            }
+            .income {
+                border-left: 4px solid var(--income-dark);
+            }
+            .expense {
+                border-left: 4px solid var(--expense-dark);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: inherit;
+        }
+
+        .balance {
+            background: var(--primary-light);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .balance:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .balance h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .balance p {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 10px 0 0;
+        }
+
+        .form-group {
+            background: var(--card-light);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .form-group:hover {
+            transform: translateY(-2px);
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        button {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #3a56d6;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .transaction {
+            background: var(--card-light);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .transaction:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .income {
+            border-left: 4px solid var(--income-light);
+        }
+
+        .expense {
+            border-left: 4px solid var(--expense-light);
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-info p {
+            margin: 0;
+        }
+
+        .transaction-info p:first-child {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        /* Animasi saat menambah transaksi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transaction {
+            animation: fadeIn 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <h1><i class="fas fa-wallet"></i> Pengatur Keuangan</h1>
+    
+    <!-- Saldo -->
+    <div class="balance">
+        <h2>Saldo Anda</h2>
+        <p id="totalBalance">Rp 0</p>
+    </div>
+    
+    <!-- Form Input Transaksi -->
+    <div class="form-group">
+        <h3><i class="fas fa-plus-circle"></i> Tambah Transaksi</h3>
+        <input type="text" id="description" placeholder="Contoh: Gaji Bulanan, Belanja">
+        <input type="number" id="amount" placeholder="Jumlah (Rp)">
+        <select id="type">
+            <option value="income">Pemasukan (+)</option>
+            <option value="expense">Pengeluaran (-)</option>
+        </select>
+        <button onclick="addTransaction()"><i class="fas fa-save"></i> Simpan Transaksi</button>
+    </div>
+    
+    <!-- Riwayat Transaksi -->
+    <div class="form-group">
+        <h3><i class="fas fa-history"></i> Riwayat Transaksi</h3>
+        <div id="transactions"></div>
+    </div>
+
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        
+        // Fungsi untuk menambah transaksi
+        function addTransaction() {
+            const description = document.getElementById("description").value;
+            const amount = parseFloat(document.getElementById("amount").value);
+            const type = document.getElementById("type").value;
+            
+            if (!description || isNaN(amount)) {
+                alert("Harap isi keterangan dan jumlah dengan benar!");
+                return;
+            }
+            
+            const transaction = {
+                id: Date.now(),
+                description,
+                amount,
+                type,
+                date: new Date().toLocaleDateString('id-ID')
+            };
+            
+            transactions.unshift(transaction); // Tambahkan di awal array
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            updateDisplay();
+            
+            // Reset form
+            document.getElementById("description").value = "";
+            document.getElementById("amount").value = "";
+        }
+        
+        // Fungsi untuk menghapus transaksi
+        function deleteTransaction(id) {
+            if (confirm("Hapus transaksi ini?")) {
+                transactions = transactions.filter(transaction => transaction.id !== id);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                updateDisplay();
+            }
+        }
+        
+        // Fungsi untuk memperbarui tampilan
+        function updateDisplay() {
+            const transactionsContainer = document.getElementById("transactions");
+            const totalBalanceElement = document.getElementById("totalBalance");
+            
+            // Hitung saldo total
+            let totalBalance = 0;
+            transactions.forEach(transaction => {
+                if (transaction.type === "income") {
+                    totalBalance += transaction.amount;
+                } else {
+                    totalBalance -= transaction.amount;
+                }
+            });
+            
+            totalBalanceElement.textContent = totalBalance.toLocaleString("id-ID");
+            
+            // Tampilkan riwayat transaksi
+            transactionsContainer.innerHTML = "";
+            if (transactions.length === 0) {
+                transactionsContainer.innerHTML = `<p style="text-align: center; color: #777;">Belum ada transaksi</p>`;
+            } else {
+                transactions.forEach(transaction => {
+                    const transactionElement = document.createElement("div");
+                    transactionElement.className = `transaction ${transaction.type}`;
+                    transactionElement.innerHTML = `
+                        <div class="transaction-info">
+                            <p>${transaction.description}</p>
+                            <small>${transaction.date}</small>
+                        </div>
+                        <div class="transaction-amount" style="color:${transaction.type === 'income' ? '#4cc9f0' : '#f72585'}">
+                            Rp ${transaction.amount.toLocaleString("id-ID")} 
+                            (${transaction.type === 'income' ? '+' : '-'})
+                        </div>
+                        <button class="delete-btn" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    transactionsContainer.appendChild(transactionElement);
+                });
+            }
+        }
+        
+        // Jalankan saat pertama kali load
+        updateDisplay();
+    </script>
+</body>
+  </html>
